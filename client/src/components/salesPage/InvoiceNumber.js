@@ -17,7 +17,10 @@ export default function InvoiceNumber({ data }) {
       <p className=" font-bold text-sm">
         Click on below generated Invoice number to direct to Page 3rd.
       </p>
-      <Link className=" w-full text-start flex justify-center text-sm">
+      <Link
+        to={"/invoice"}
+        className=" w-full text-start flex justify-center text-sm"
+      >
         Invoice no.:
         <h2
           onClick={invoiceClickHandler}

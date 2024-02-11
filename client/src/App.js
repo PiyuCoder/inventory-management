@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { store } from "./store/store";
 import SalesPage from "./pages/SalesPage";
+import Invoice from "./pages/Invoice";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       <Route path="login" element={<Login />} />
       <Route path="inventory" element={<Inventory />} />
       <Route path="sales" element={<SalesPage />} />
+      <Route path="invoice" element={<Invoice />} />
     </Route>
   )
 );
