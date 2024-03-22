@@ -15,6 +15,7 @@ import InvoiceGenerator from "./pages/InvoiceGenerator";
 import Invoice from "./pages/Invoice";
 import SalesPage from "./pages/SalesPage";
 import Dashboard from "./pages/Dashboard";
+import { useRouteMatch } from "react-router-dom";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
