@@ -36,6 +36,8 @@ const shopkeeperSchema = new mongoose.Schema({
       ref: "Sales",
     },
   ],
+  logo: String,
+  address: String,
 });
 
 export const Shopkeeper = mongoose.model("Shopkeeper", shopkeeperSchema);

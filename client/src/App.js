@@ -11,17 +11,21 @@ import {
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { store } from "./store/store";
-import SalesPage from "./pages/SalesPage";
+import InvoiceGenerator from "./pages/InvoiceGenerator";
 import Invoice from "./pages/Invoice";
+import SalesPage from "./pages/SalesPage";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route path="register" element={<Register />} />
       <Route path="login" element={<Login />} />
+      <Route path="" element={<Dashboard />} />
       <Route path="inventory" element={<Inventory />} />
-      <Route path="sales" element={<SalesPage />} />
+      <Route path="newSale" element={<InvoiceGenerator />} />
       <Route path="invoice" element={<Invoice />} />
+      <Route path="sales" element={<SalesPage />} />
     </Route>
   )
 );

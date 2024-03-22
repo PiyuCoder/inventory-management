@@ -1,15 +1,17 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { getInvoiceData } from "../../axios/axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function InvoiceNumber({ data }) {
   const sales = useSelector((state) => state?.sales);
+  const navigate = useNavigate();
   const invoiceClickHandler = async (e) => {
     console.log(e.target.innerText);
     const res = await getInvoiceData(e.target.innerText);
     console.log(res);
+    navigate("/invoice", { state: res?.data?.invoiceData.invoiceData });
   };
   return (
     <div className="text-black p-5 pb-14 w-full m-5 shadow-2xl sm:w-1/2 rounded-lg text-center bg-white flex flex-col items-center justify-center">
@@ -17,18 +19,13 @@ export default function InvoiceNumber({ data }) {
       <p className=" font-bold text-sm">
         Click on below generated Invoice number to direct to Page 3rd.
       </p>
-      <Link
-        to={"/invoice"}
-        className=" w-full text-start flex justify-center text-sm"
+      Invoice no.:
+      <h2
+        onClick={invoiceClickHandler}
+        className="text-sm underline font-bold text-center  text-blue-600"
       >
-        Invoice no.:
-        <h2
-          onClick={invoiceClickHandler}
-          className="text-sm underline font-bold text-center  text-blue-600"
-        >
-          {data}
-        </h2>
-      </Link>
+        {data}
+      </h2>
       <br />
       <hr className="w-full bg-slate-600" />
       <br />

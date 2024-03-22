@@ -34,6 +34,12 @@ export default function Nav() {
           <Link className=" hover:text-amber-800 transition-all" to={"/sales"}>
             SALES
           </Link>
+          <Link
+            className=" hover:text-amber-800 transition-all"
+            to={"/newSale"}
+          >
+            NEW SALE
+          </Link>
         </div>
 
         <Link

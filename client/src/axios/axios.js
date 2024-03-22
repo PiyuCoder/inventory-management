@@ -4,7 +4,8 @@ const url = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 export const register = async (formData) => {
   try {
-    const res = await axios.post(`${url}/api/register`, { formData });
+    console.log(formData);
+    const res = await axios.post(`${url}/api/register`, formData);
     return res;
   } catch (error) {
     return error.response;
@@ -59,12 +60,19 @@ export const updateInventory = async (formData) => {
   }
 };
 
-export const saveInvoiceNumber = async (formData) => {
+export const saveInvoiceNumber = async (formData, token) => {
   try {
-    console.log("state", formData);
-    const res = await axios.post(`${url}/api/sales/invoiceNumber`, {
-      formData: JSON.stringify(formData),
-    });
+    const res = await axios.post(
+      `${url}/api/sales/invoiceNumber`,
+      {
+        formData: JSON.stringify(formData),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res;
   } catch (error) {
     return error.response;
@@ -89,6 +97,19 @@ export const getInvoiceData = async (invoiceNumber) => {
     const res = await axios.get(
       `${url}/api/sales/invoiceData?invoiceNumber=${invoiceNumber}`
     );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+export const fetchAllInvoiceData = async (token) => {
+  try {
+    const res = await axios.get(`${url}/api/sales/allInvoiceData`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return res;
   } catch (error) {
     return error.response;

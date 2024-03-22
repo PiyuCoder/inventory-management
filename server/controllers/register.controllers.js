@@ -3,9 +3,14 @@ import { Shopkeeper } from "../models/shopkeeper.models.js";
 
 export const register = async (req, res) => {
   try {
-    const { name, phone, email, password, establishment } = req.body.formData;
+    const { name, phone, email, password, establishment, address } = req.body;
+    const { filename } = req.file;
 
-    if (!name || !phone || !email || !password || !establishment)
+    if (!req.file) {
+      return res.status(400).send("No logo uploaded.");
+    }
+
+    if (!name || !phone || !email || !password || !establishment || !address)
       return res
         .status(400)
         .json({ success: false, message: "All fields are mandatory" });
@@ -26,6 +31,8 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
       establishment,
+      logo: filename,
+      address,
     }).save();
 
     newUser.password = undefined;

@@ -12,13 +12,7 @@ export const addInventory = async (req, res) => {
     } = req.body.formData;
     const userId = req.user.id;
 
-    if (
-      !productName ||
-      !productSerialNumber ||
-      !quantitiesReceived ||
-      !pricePerUnit ||
-      !vendorName
-    )
+    if (!productName || !productSerialNumber || !vendorName)
       return res
         .status(400)
         .json({ success: false, message: "All fields are mandatory." });
@@ -27,12 +21,10 @@ export const addInventory = async (req, res) => {
     const inventory = await Inventory.findOne({ productSerialNumber });
 
     if (inventory)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Product already exists with same serial number.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Product already exists with same serial number.",
+      });
 
     const newInventory = await new Inventory({
       productName,
