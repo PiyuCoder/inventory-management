@@ -94,7 +94,7 @@ export default function ProductPurchased({ index, product }) {
           />
 
           <datalist id="products">
-            {inventories.map((inventory) => (
+            {inventories?.map((inventory) => (
               <option
                 className=" hover:bg-slate-100 cursor-pointer"
                 key={inventory._id}

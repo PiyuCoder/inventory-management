@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../axios/axios";
 import { useDispatch } from "react-redux";
 import { setCurrentUser, setToken } from "../store/authSlice";
+import Loader from "../components/Loader";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ export default function Login() {
   });
   const dispatch = useDispatch();
   const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,15 +22,18 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const res = await login(formData);
     if (res?.data?.success) {
       dispatch(setCurrentUser(res?.data?.user));
       dispatch(setToken(res?.data?.token));
       sessionStorage.setItem("token", res?.data?.token);
       sessionStorage.setItem("user", JSON.stringify(res?.data?.user));
+      navigate("/");
+      setIsLoading(false);
     } else {
       setMsg(res?.data?.message);
+      setIsLoading(false);
     }
     // Reset the form after submission
     setFormData({
@@ -37,8 +43,9 @@ export default function Login() {
   };
   return (
     <div className="w-full h-full flex items-center justify-center flex-col">
+      {isLoading && <Loader />}
       <form
-        className="bg-white p-8 rounded shadow-md w-96"
+        className="bg-white p-8 px-12 rounded shadow-md "
         onSubmit={handleSubmit}
       >
         <h2 className="text-2xl font-bold mb-6">Login</h2>

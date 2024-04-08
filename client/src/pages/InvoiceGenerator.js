@@ -9,8 +9,7 @@ import {
   generateInvoiceNumber,
   updateTotalPrice,
 } from "../store/salesSlice";
-import { getInvoiceData, saveInvoiceNumber } from "../axios/axios";
-import Done from "../components/Done";
+import { saveInvoiceNumber } from "../axios/axios";
 import InvoiceNumber from "../components/salesPage/InvoiceNumber";
 import { setCurrentUser } from "../store/authSlice";
 
@@ -19,12 +18,12 @@ export default function InvoiceGenerator() {
   const sales = useSelector((state) => state.sales);
   const token = useSelector((state) => state?.auth?.token);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-  console.log(isSubmit);
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     try {
       if (
         sales.customerInfo.name &&
@@ -45,10 +44,13 @@ export default function InvoiceGenerator() {
           setIsSubmit(true);
           setMsg("");
           dispatch(setCurrentUser(res?.data?.user));
+        } else {
+          setMsg(res?.data?.message);
         }
       } else {
         setMsg("Some fields are missing");
       }
+      setIsLoading(false);
     } catch (error) {}
   };
 
@@ -81,6 +83,7 @@ export default function InvoiceGenerator() {
           {sales?.products?.map((product, i) => (
             <ProductPurchased key={i} index={i} product={product} />
           ))}
+          <p className=" text-red-600">{msg}</p>
           <button
             className=" flex ms-5 mt-5 p-2 rounded-md bg-blue-800 text-white items-center gap-1"
             onClick={(e) => {
@@ -94,15 +97,16 @@ export default function InvoiceGenerator() {
           <br />
           <div className="w-full fixed bottom-0 z-10 flex p-5 text-white md:w-1/2 bg-black items-center justify-between">
             <div>
-              <p className=" text-red-600">{msg}</p>
               <h2 className=" font-bold text-lg">Total Price:</h2>
               <p>{sales.totalPrice}/-</p>
             </div>
             <button
-              className="bg-green-500 text-white p-3 max-h-12  rounded-md font-bold"
+              className={`${
+                isLoading ? "bg-gray-500" : "bg-green-500"
+              }  text-white p-3 max-h-12  rounded-md font-bold`}
               type="submit"
             >
-              Generate Invoice
+              {isLoading ? "Loading..." : "Generate Invoice"}
             </button>
           </div>
         </form>

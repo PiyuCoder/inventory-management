@@ -1,18 +1,18 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useReactToPrint } from "react-to-print";
+import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { useLocation } from "react-router-dom";
+import Loader from "../components/Loader";
 
 const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:8000";
 
 export default function Invoice({ salesPage }) {
   const invoiceRef = useRef();
   const location = useLocation();
-  const sales = useSelector((state) => state?.sales);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state?.auth.user);
-  const [pdfWidth, setPdfWidth] = useState(210); // A4 paper width in mm
-  const [pdfHeight, setPdfHeight] = useState(297);
 
   const handlePrint = useReactToPrint({
     content: () => invoiceRef.current,
@@ -22,27 +22,45 @@ export default function Invoice({ salesPage }) {
 
   // Function to handle PDF download
   const handleDownloadPDF = () => {
-    const doc = new jsPDF({
-      orientation: "portrait", // or 'landscape'
-      unit: "mm",
-      format: [pdfWidth, pdfHeight],
-    });
-    doc.html(invoiceRef.current, {
-      callback: function (pdf) {
-        pdf.save("invoice.pdf");
-      },
-    });
+    setIsLoading(true);
+    // Get the invoice container element
+    const invoiceContainer = invoiceRef.current;
+
+    // Use html2canvas to render the content of the invoice container to a canvas
+    html2canvas(invoiceContainer, { scrollY: -window.scrollY }).then(
+      (canvas) => {
+        // Calculate the dimensions of the PDF page based on the dimensions of the rendered content
+        const contentWidth = canvas.width / 4; // Divide canvas width by 4 for better readability
+        const contentHeight = canvas.height / 4; // Divide canvas height by 4 for better readability
+
+        // Create a new jsPDF instance with the calculated width and height
+        const doc = new jsPDF({
+          orientation: contentWidth > contentHeight ? "landscape" : "portrait", // Choose orientation based on content dimensions
+          unit: "mm",
+          format: [contentWidth, contentHeight],
+        });
+
+        // Add the rendered canvas image to the PDF
+        const imageData = canvas.toDataURL("image/png");
+        doc.addImage(imageData, "PNG", 0, 0, contentWidth, contentHeight);
+
+        // Save the PDF
+        doc.save("invoice.pdf");
+        setIsLoading(false);
+      }
+    );
   };
 
   return (
     <div
       className={`${
         salesPage ? " absolute top-1 md:top-14" : ""
-      } w-screen h-screen flex flex-col items-center justify-center gap-5 overflow-y-auto bg-slate-200`}
+      } w-screen h-full flex flex-col items-center justify-center gap-5 overflow-y-auto bg-slate-200`}
     >
+      {isLoading && <Loader />}
       <div className=" absolute bottom-5 md:relative">
         <button
-          className="bg-green-500 text-white p-3 rounded-md font-bold mt-4"
+          className="bg-green-500 text-white p-3 rounded-md font-bold mt-4 print-button"
           onClick={handlePrint}
         >
           Print
@@ -85,13 +103,13 @@ export default function Invoice({ salesPage }) {
           <h2>Date: {sales?.customerInfo.currentDate}</h2> */}
         </div>
         <br />
-        <p className=" text-[9px] sm:text-xs underline font-bold text-start w-full">
+        <p className=" text-[9px] sm:text-xs underline font-bold text-start w-full mb-2">
           Products purchased:
         </p>
         <table className=" w-full">
-          <thead>
-            <tr className="text-[9px] sm:text-xs gap-1 border-2 text-white bg-black">
-              <th>S.No.</th>
+          <thead className=" p-2">
+            <tr className="text-[9px] sm:text-xs gap-1 border-2 text-white bg-black text-center">
+              <th className=" p-1">S.No.</th>
               <th>Product</th>
               <th>Serial</th>
               <th>Qty.</th>

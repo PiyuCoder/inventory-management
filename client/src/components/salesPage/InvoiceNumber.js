@@ -17,7 +17,7 @@ export default function InvoiceNumber({ data }) {
     <div className="text-black p-5 pb-14 w-full m-5 shadow-2xl sm:w-1/2 rounded-lg text-center bg-white flex flex-col items-center justify-center">
       <FaCheckCircle size={20} color="green" />
       <p className=" font-bold text-sm">
-        Click on below generated Invoice number to direct to Page 3rd.
+        Click on below generated Invoice number to view the detailed invoice.
       </p>
       Invoice no.:
       <h2

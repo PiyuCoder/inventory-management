@@ -1,10 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import Menu from "./Menu";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../store/authSlice";
 
 export default function Nav() {
   const [isMenu, setIsMenu] = useState(false);
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = () => {
+    if (token) {
+      navigate("/login");
+    }
+    sessionStorage.clear();
+    dispatch(setToken(null));
+  };
+
   return (
     <nav className=" w-screen flex items-center justify-end md:justify-center md:bg-yellow-600 px-4 z-50 md:px-10 p-4 fixed">
       <div
@@ -22,9 +36,7 @@ export default function Nav() {
           <Link className=" hover:text-amber-800 transition-all" to={"/"}>
             HOME
           </Link>
-          <Link className=" hover:text-amber-800 transition-all" to={"/"}>
-            ABOUT
-          </Link>
+
           <Link
             className=" hover:text-amber-800 transition-all"
             to={"/inventory"}
@@ -42,12 +54,12 @@ export default function Nav() {
           </Link>
         </div>
 
-        <Link
+        <button
           className=" bg-green-500 text-white p-2   rounded-lg font-bold"
-          to={"/login"}
+          onClick={logoutHandler}
         >
-          Login
-        </Link>
+          {token ? "Logout" : "Login"}
+        </button>
       </ul>
       {isMenu && <Menu setIsMenu={setIsMenu} />}
     </nav>

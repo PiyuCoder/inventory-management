@@ -72,7 +72,7 @@ export default function Register() {
     <div className="w-full h-full flex items-center justify-center">
       {!isSuccess ? (
         <form
-          className="bg-white p-8 rounded shadow-md w-96"
+          className="bg-white p-8 rounded shadow-md "
           onSubmit={handleSubmit}
         >
           <h2 className="text-2xl font-bold mb-6">Register</h2>

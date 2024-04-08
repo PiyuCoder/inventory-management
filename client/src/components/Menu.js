@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function Menu({ setIsMenu }) {
   const menuRef = useRef();
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
 
   const handleOutsideClick = (e) => {
     if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -29,11 +29,15 @@ export default function Menu({ setIsMenu }) {
         <Link className=" hover:text-amber-800 " to={"/"}>
           HOME
         </Link>
-        <Link className=" hover:text-amber-800 " to={"/"}>
-          ABOUT
-        </Link>
+
         <Link className=" hover:text-amber-800 " to={"/inventory"}>
           INVENTORY
+        </Link>
+        <Link className=" hover:text-amber-800 " to={"/sales"}>
+          Sales
+        </Link>
+        <Link className=" hover:text-amber-800 " to={"/newsale"}>
+          New Sale
         </Link>
         <Link
           className=" bg-green-500 text-white p-2 text-center   rounded-lg font-bold"

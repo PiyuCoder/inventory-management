@@ -1,3 +1,4 @@
+import { Inventory } from "../models/inventory.models.js";
 import { Sales } from "../models/sales.models.js";
 import { Shopkeeper } from "../models/shopkeeper.models.js";
 
@@ -23,28 +24,53 @@ export const saveInvoiceData = async (req, res) => {
     const invoiceNumber = formData.invoiceNumber;
     const userId = req.user.id;
 
+    // Check if the invoice number already exists
     const exists = await Sales.findOne({ invoiceNumber });
 
     if (exists) {
       return res.status(200).json({ isUnique: false });
     }
 
+    // Find the user/shopkeeper
     const user = await Shopkeeper.findById(userId);
 
     if (!user) {
       return res.status(400).json({ message: "User not found." });
     }
+
+    // Create a new Sales document with the invoice data
     const newInvoice = await new Sales({
       invoiceData: formData,
       invoiceNumber,
     }).save();
 
-    await user.invoices.push(newInvoice._id);
+    // Update inventory quantities for products in the invoice
+    for (const product of formData.products) {
+      const inventoryItem = await Inventory.findOne({
+        productSerialNumber: product.productSerialNumber,
+      });
+      if (inventoryItem) {
+        if (inventoryItem.quantitiesReceived > 0) {
+          inventoryItem.quantitiesReceived -= product.quantitySold;
+          await inventoryItem.save();
+        } else {
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: `${inventoryItem.productName} is Out of Stock`,
+            });
+        }
+      }
+    }
 
-    user.save();
+    // Add the new invoice to the user's invoices array
+    user.invoices.push(newInvoice._id);
+    await user.save();
 
     return res.status(200).json({ success: true, newInvoice, user });
   } catch (error) {
+    console.error("Error saving invoice data:", error);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
